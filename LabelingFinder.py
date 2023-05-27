@@ -90,20 +90,18 @@ def labeling_finder(Graph, Labeling_set, Combine_function):
 
     # First, we will be setting up iterators that contain positional arguments for _edge_injective_wrapper
         # argument_1 contains the graph
-        # argument_2 contains the vertex labeling
-        # argument_3 contains the function that can combine vertex labels
-
-    # In the case that the graph is a tree, we need to allow a repeated edge label, this is done by way of using _tree_labeling_set_iterator 
+    argument_1 = it.repeat(Graph)
+    
+        # argument_2 contains the vertex labeling 
+            # In the case that the graph is a tree, we need to allow a repeated edge label, this is done by way of using _tree_labeling_set_iterator
     if nx.is_tree(Graph):
-        argument_1 = (item[0] for item in it.zip_longest((Graph,), _tree_labeling_set_iterator(Labeling_set), fillvalue=Graph))
         argument_2 = _tree_labeling_set_iterator(Labeling_set)
-        argument_3 = (item[0] for item in it.zip_longest((Combine_function,), _tree_labeling_set_iterator(Labeling_set), fillvalue=Combine_function))
-
-    # Otherwise we only allow permutations of the vertex set 
+            # Otherwise we only allow permutations of the vertex set 
     else:
-        argument_1 = (item[0] for item in it.zip_longest((Graph,), it.permutations(Labeling_set, Graph.number_of_nodes()), fillvalue=Graph))
         argument_2 = it.permutations(Labeling_set, Graph.number_of_nodes())
-        argument_3 = (item[0] for item in it.zip_longest((Combine_function,), it.permutations(Labeling_set, Graph.number_of_nodes()), fillvalue=Combine_function))
+        
+        # argument_3 contains the function that can combine vertex labels
+    argument_3 = it.repeat(Combine_function)
     
     # We can then put the positional arguments together into a single iterator
     arguments = zip(argument_1, argument_2, argument_3)
